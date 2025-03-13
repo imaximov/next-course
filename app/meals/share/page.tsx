@@ -20,6 +20,14 @@ interface FormState {
     general?: string;
   };
   redirect?: boolean;
+  values?: {
+    title: string;
+    summary: string;
+    instructions: string;
+    creator: string;
+    creator_email: string;
+    imageUrl?: string;
+  };
 }
 
 // Submit button component with loading state
@@ -72,14 +80,26 @@ export default function ShareMealPage() {
           <div className={classes.row}>
             <p>
               <label htmlFor="name">Your name</label>
-              <input type="text" id="name" name="name" required />
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                required 
+                defaultValue={formState.values?.creator || ''}
+              />
               {formState.errors?.creator && (
                 <span className={classes.error}>{formState.errors.creator}</span>
               )}
             </p>
             <p>
               <label htmlFor="email">Your email</label>
-              <input type="email" id="email" name="email" required />
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                required 
+                defaultValue={formState.values?.creator_email || ''}
+              />
               {formState.errors?.creator_email && (
                 <span className={classes.error}>{formState.errors.creator_email}</span>
               )}
@@ -87,14 +107,26 @@ export default function ShareMealPage() {
           </div>
           <p>
             <label htmlFor="title">Title</label>
-            <input type="text" id="title" name="title" required />
+            <input 
+              type="text" 
+              id="title" 
+              name="title" 
+              required 
+              defaultValue={formState.values?.title || ''}
+            />
             {formState.errors?.title && (
               <span className={classes.error}>{formState.errors.title}</span>
             )}
           </p>
           <p>
             <label htmlFor="summary">Short Summary</label>
-            <input type="text" id="summary" name="summary" required />
+            <input 
+              type="text" 
+              id="summary" 
+              name="summary" 
+              required 
+              defaultValue={formState.values?.summary || ''}
+            />
             {formState.errors?.summary && (
               <span className={classes.error}>{formState.errors.summary}</span>
             )}
@@ -106,12 +138,17 @@ export default function ShareMealPage() {
               name="instructions"
               rows={10}
               required
+              defaultValue={formState.values?.instructions || ''}
             ></textarea>
             {formState.errors?.instructions && (
               <span className={classes.error}>{formState.errors.instructions}</span>
             )}
           </p>
-          <ImagePicker label="Your meal image" name="image" />
+          <ImagePicker 
+            label="Your meal image" 
+            name="image" 
+            defaultImage={formState.values?.imageUrl}
+          />
           {formState.errors?.image && (
             <span className={classes.error}>{formState.errors.image}</span>
           )}

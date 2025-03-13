@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useRef, useState, ChangeEvent } from 'react';
+import React, { useRef, useState, ChangeEvent, useEffect } from 'react';
 import Image from 'next/image';
 import classes from './image-picker.module.css';
 
 interface ImagePickerProps {
   label: string;
   name: string;
+  defaultImage?: string;
 }
 
 interface PickedImage {
@@ -14,9 +15,19 @@ interface PickedImage {
   name: string;
 }
 
-const ImagePicker = ({ label, name }: ImagePickerProps) => {
+const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
   const [pickedImage, setPickedImage] = useState<PickedImage | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+
+  // Set default image if provided
+  useEffect(() => {
+    if (defaultImage) {
+      setPickedImage({
+        url: defaultImage,
+        name: 'Previously uploaded image'
+      });
+    }
+  }, [defaultImage]);
 
   const handlePickClick = () => {
     if (imageInputRef.current) {

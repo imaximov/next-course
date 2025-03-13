@@ -11,6 +11,14 @@ interface FormState {
   success: boolean;
   errors: ValidationErrors;
   redirect?: boolean;
+  values?: {
+    title: string;
+    summary: string;
+    instructions: string;
+    creator: string;
+    creator_email: string;
+    imageUrl?: string;
+  };
 }
 
 export async function shareMeal(prevState: FormState, formData: FormData): Promise<FormState> {
@@ -23,6 +31,40 @@ export async function shareMeal(prevState: FormState, formData: FormData): Promi
     creator: xss(formData.get('name') as string),
     creator_email: xss(formData.get('email') as string),
   };
+
+  // Store form values to return in case of validation errors
+  const formValues: {
+    title: string;
+    summary: string;
+    instructions: string;
+    creator: string;
+    creator_email: string;
+    imageUrl?: string;
+  } = {
+    title: meal.title,
+    summary: meal.summary,
+    instructions: meal.instructions,
+    creator: meal.creator,
+    creator_email: meal.creator_email
+  };
+
+  // If we have an image and it's a File object with a size (not a string from a previous submission)
+  if (meal.image && meal.image instanceof File && meal.image.size > 0) {
+    // Create a data URL for the image to preserve it in the form
+    const reader = new FileReader();
+    try {
+      const imageUrl = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(meal.image);
+      });
+      
+      // Add the image URL to the form values
+      formValues.imageUrl = imageUrl;
+    } catch (error) {
+      console.error('Error reading image file:', error);
+    }
+  }
 
   try {
     // Save the meal using the Supabase service
@@ -61,7 +103,8 @@ export async function shareMeal(prevState: FormState, formData: FormData): Promi
 
     return {
       success: false,
-      errors
+      errors,
+      values: formValues // Return the form values to preserve them
     };
   }
 } 
