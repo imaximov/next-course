@@ -1,5 +1,6 @@
 import { Meal, MealFormData } from '../types/meals';
 import { supabaseMealService } from './supabase/services';
+import { unstable_cache } from 'next/cache';
 
 // Set this to true to test the error page
 const shouldThrowError = false;
@@ -16,7 +17,14 @@ export async function getMeals(): Promise<Meal[]> {
     throw new Error('Failed to fetch meals. This is a test error.');
   }
 
-  return supabaseMealService.getAllMeals();
+  // Use unstable_cache with a short revalidation time to ensure fresh data
+  const getCachedMeals = unstable_cache(
+    async () => supabaseMealService.getAllMeals(),
+    ['meals-data'],
+    { revalidate: 10 } // Revalidate every 10 seconds
+  );
+
+  return getCachedMeals();
 }
 
 /**
@@ -31,7 +39,14 @@ export async function getMeal(slug: string): Promise<Meal | undefined> {
     throw new Error('Failed to fetch meal. This is a test error.');
   }
 
-  return supabaseMealService.getMealBySlug(slug);
+  // Use unstable_cache with a short revalidation time to ensure fresh data
+  const getCachedMeal = unstable_cache(
+    async () => supabaseMealService.getMealBySlug(slug),
+    [`meal-data-${slug}`, 'meals-data'],
+    { revalidate: 10 } // Revalidate every 10 seconds
+  );
+
+  return getCachedMeal();
 }
 
 /**
