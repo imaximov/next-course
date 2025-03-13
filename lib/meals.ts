@@ -1,5 +1,5 @@
 import { Meal, MealFormData } from '../types/meals';
-import { mealService } from './db/services';
+import { supabaseMealService } from './supabase/services';
 
 // Set this to true to test the error page
 const shouldThrowError = false;
@@ -16,7 +16,7 @@ export async function getMeals(): Promise<Meal[]> {
     throw new Error('Failed to fetch meals. This is a test error.');
   }
 
-  return mealService.getAllMeals();
+  return supabaseMealService.getAllMeals();
 }
 
 /**
@@ -31,7 +31,7 @@ export async function getMeal(slug: string): Promise<Meal | undefined> {
     throw new Error('Failed to fetch meal. This is a test error.');
   }
 
-  return mealService.getMealBySlug(slug);
+  return supabaseMealService.getMealBySlug(slug);
 }
 
 /**
@@ -39,5 +39,5 @@ export async function getMeal(slug: string): Promise<Meal | undefined> {
  * This is a wrapper around the service layer to maintain backward compatibility
  */
 export async function saveMeal(meal: MealFormData): Promise<void> {
-  await mealService.createMeal(meal);
+  await supabaseMealService.createMeal(meal);
 } 

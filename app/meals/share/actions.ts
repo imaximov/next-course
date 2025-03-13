@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import xss from 'xss';
 import { MealFormData } from '@/types/meals';
-import { mealService } from '@/lib/db/services';
-import type { ValidationErrors } from '@/lib/db/services';
+import { supabaseMealService } from '@/lib/supabase/services';
+import type { ValidationErrors } from '@/lib/supabase/services';
 
 interface FormState {
   success: boolean;
@@ -24,20 +24,9 @@ export async function shareMeal(prevState: FormState, formData: FormData): Promi
     creator_email: xss(formData.get('email') as string),
   };
 
-  // Validate form data using the service
-  const errors = mealService.validateMealData(meal);
-
-  // If there are validation errors, return them
-  if (Object.keys(errors).length > 0) {
-    return {
-      success: false,
-      errors
-    };
-  }
-
   try {
-    // Save the meal using the service
-    await mealService.createMeal(meal);
+    // Save the meal using the Supabase service
+    await supabaseMealService.createMeal(meal);
 
     // Revalidate the meals page to show the new meal
     revalidatePath('/meals');
@@ -52,22 +41,27 @@ export async function shareMeal(prevState: FormState, formData: FormData): Promi
     // Handle errors from the service
     console.error('Error saving meal:', error);
 
-    // Check for specific error messages
-    if (error.message.includes('A meal with this title already exists')) {
-      return {
-        success: false,
-        errors: {
+    // Try to parse error message if it's a JSON string (validation errors)
+    let errors: ValidationErrors = {};
+    try {
+      errors = JSON.parse(error.message);
+    } catch {
+      // If not a JSON string, check for specific error messages
+      if (error.message.includes('A meal with this title already exists')) {
+        errors = {
           title: 'A meal with this title already exists. Please choose a different title.',
           general: 'Failed to save meal due to duplicate title.'
-        }
-      };
+        };
+      } else {
+        errors = {
+          general: `Failed to save meal: ${error.message}`
+        };
+      }
     }
 
     return {
       success: false,
-      errors: {
-        general: `Failed to save meal: ${error.message}`
-      }
+      errors
     };
   }
 } 
