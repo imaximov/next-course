@@ -73,7 +73,22 @@ export class SupabaseMealRepository extends SupabaseBaseRepository<Meal> {
       });
       
       // Get the image file extension
-      const extension = mealData.image.name.split('.').pop();
+      let extension = mealData.image.name.split('.').pop()?.toLowerCase();
+      
+      // Ensure we have a valid extension based on the file type
+      if (!extension || !['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
+        // Fallback to extension based on mime type
+        if (mealData.image.type === 'image/jpeg') {
+          extension = 'jpg';
+        } else if (mealData.image.type === 'image/png') {
+          extension = 'png';
+        } else if (mealData.image.type === 'image/webp') {
+          extension = 'webp';
+        } else {
+          extension = 'jpg'; // Default fallback
+        }
+      }
+      
       const fileName = `${slug}.${extension}`;
       const imagePath = `meals/${fileName}`;
       
