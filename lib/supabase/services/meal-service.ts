@@ -1,5 +1,6 @@
 import { Meal, MealFormData } from '@/types/meals';
 import { SupabaseMealRepository } from './meal-repository';
+import { StorageService } from '../storage-service';
 
 /**
  * Type for validation errors
@@ -29,7 +30,9 @@ export class SupabaseMealService {
    */
   async getAllMeals(): Promise<Meal[]> {
     try {
-      return await this.repository.findAll();
+      // Get all meals that are not soft-deleted
+      const meals = await this.repository.findAll();
+      return meals.filter(meal => !meal.is_deleted);
     } catch (error) {
       console.error('Error getting all meals:', error);
       throw new Error('Failed to retrieve meals');
@@ -45,7 +48,14 @@ export class SupabaseMealService {
     }
     
     try {
-      return await this.repository.findBySlug(slug);
+      const meal = await this.repository.findBySlug(slug);
+      
+      // Return undefined if the meal is soft-deleted
+      if (meal && meal.is_deleted) {
+        return undefined;
+      }
+      
+      return meal;
     } catch (error) {
       console.error(`Error getting meal by slug ${slug}:`, error);
       throw new Error(`Failed to retrieve meal with slug ${slug}`);
@@ -132,5 +142,30 @@ export class SupabaseMealService {
     }
     
     return errors;
+  }
+
+  /**
+   * Delete a meal by ID (soft delete)
+   * This marks the meal as deleted without actually removing it from the database
+   */
+  async deleteMeal(id: number): Promise<void> {
+    if (!id) {
+      throw new Error('Meal ID is required');
+    }
+    
+    try {
+      // First get the meal to check if it exists
+      const meal = await this.repository.findById(id);
+      
+      if (!meal) {
+        throw new Error(`Meal with ID ${id} not found`);
+      }
+      
+      // Soft delete the meal by updating the is_deleted flag
+      await this.repository.update(id, { is_deleted: true });
+    } catch (error) {
+      console.error(`Error deleting meal with ID ${id}:`, error);
+      throw new Error(`Failed to delete meal: ${(error as Error).message}`);
+    }
   }
 } 

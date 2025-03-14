@@ -9,6 +9,7 @@ export interface Meal {
   instructions: string;
   creator: string;
   creator_email: string;
+  is_deleted?: boolean;
 }
 
 export interface MealFormData {

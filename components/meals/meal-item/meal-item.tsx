@@ -3,15 +3,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import classes from './meal-item.module.css';
 import { Meal } from '@/types/meals';
+import DeleteMealButton from '../delete-meal-button/delete-meal-button';
 
-type MealItemProps = Pick<Meal, 'title' | 'slug' | 'image' | 'summary' | 'creator'>;
+type MealItemProps = Pick<Meal, 'id' | 'title' | 'slug' | 'image' | 'summary' | 'creator'>;
 
-export default function MealItem({ title, slug, image, summary, creator }: MealItemProps) {
+export default function MealItem({ id, title, slug, image, summary, creator }: MealItemProps) {
   return (
     <article className={classes.meal}>
       <header>
         <div className={classes.image}>
           <Image src={image} alt={title} fill />
+          {id && <DeleteMealButton id={id} title={title} />}
         </div>
         <div className={classes.headerText}>
           <h2>{title}</h2>

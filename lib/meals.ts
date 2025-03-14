@@ -55,4 +55,12 @@ export async function getMeal(slug: string): Promise<Meal | undefined> {
  */
 export async function saveMeal(meal: MealFormData): Promise<void> {
   await supabaseMealService.createMeal(meal);
+}
+
+/**
+ * Delete a meal by ID
+ * This is a wrapper around the service layer to maintain backward compatibility
+ */
+export async function deleteMeal(id: number): Promise<void> {
+  await supabaseMealService.deleteMeal(id);
 } 
