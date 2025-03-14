@@ -75,8 +75,19 @@ export class SupabaseMealRepository extends SupabaseBaseRepository<Meal> {
       // Get the image file extension
       let extension = mealData.image.name.split('.').pop()?.toLowerCase();
       
+      // Check if it's a HEIC/HEIF file that has been converted to JPEG
+      const isConvertedHeic = 
+        mealData.image.type === 'image/jpeg' && 
+        (mealData.image.name.toLowerCase().includes('converted') || 
+         mealData.image.name.toLowerCase().includes('heic') || 
+         mealData.image.name.toLowerCase().includes('heif'));
+      
+      if (isConvertedHeic) {
+        extension = 'jpg';
+      }
+      
       // Ensure we have a valid extension based on the file type
-      if (!extension || !['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
+      if (!extension || !['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif'].includes(extension)) {
         // Fallback to extension based on mime type
         if (mealData.image.type === 'image/jpeg') {
           extension = 'jpg';
@@ -84,6 +95,8 @@ export class SupabaseMealRepository extends SupabaseBaseRepository<Meal> {
           extension = 'png';
         } else if (mealData.image.type === 'image/webp') {
           extension = 'webp';
+        } else if (mealData.image.type === 'image/heic' || mealData.image.type === 'image/heif') {
+          extension = 'jpg'; // Convert HEIC/HEIF to JPG for storage
         } else {
           extension = 'jpg'; // Default fallback
         }

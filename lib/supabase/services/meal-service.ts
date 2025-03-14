@@ -133,11 +133,20 @@ export class SupabaseMealService {
     if (!data.image) {
       errors.image = 'Image is required';
     } else {
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      if (!allowedTypes.includes(data.image.type)) {
-        errors.image = 'Image must be a JPEG, PNG, or WebP file';
-      } else if (data.image.size > 5 * 1024 * 1024) {
-        errors.image = 'Image must be smaller than 5MB';
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+      
+      // Check if it's a converted HEIC/HEIF file (which will have image/jpeg type)
+      const isConvertedHeic = 
+        data.image.type === 'image/jpeg' && 
+        (data.image.name.toLowerCase().includes('converted') || 
+         data.image.name.toLowerCase().includes('heic') || 
+         data.image.name.toLowerCase().includes('heif'));
+      
+      // Allow converted HEIC/HEIF files
+      if (!allowedTypes.includes(data.image.type) && !isConvertedHeic) {
+        errors.image = 'Image must be a JPEG, PNG, WebP, or HEIC/HEIF (iPhone) file';
+      } else if (data.image.size > 10 * 1024 * 1024) {
+        errors.image = 'Image must be smaller than 10MB';
       }
     }
     
