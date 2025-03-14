@@ -2,7 +2,6 @@
 
 import { useRef, useState, ChangeEvent, useEffect } from 'react';
 import Image from 'next/image';
-import heic2any from 'heic2any';
 import classes from './image-picker.module.css';
 
 interface ImagePickerProps {
@@ -18,7 +17,13 @@ interface PickedImage {
 }
 
 // Function to resize an image to reduce its file size
+// This function uses browser APIs and should only run on the client
 const resizeImage = async (file: File, maxWidth = 1920, maxHeight = 1080, quality = 0.8): Promise<File> => {
+  // Only run this function in the browser
+  if (typeof window === 'undefined') {
+    return file; // Return the original file on the server
+  }
+
   return new Promise((resolve, reject) => {
     const img = document.createElement('img');
     img.src = URL.createObjectURL(file);
@@ -89,6 +94,12 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
   const [conversionError, setConversionError] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const hiddenFileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isBrowser, setIsBrowser] = useState(false);
+
+  // Check if we're in the browser
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
 
   // Initialize with defaultImage if provided
   useEffect(() => {
@@ -107,6 +118,9 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
   };
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    // Only run in the browser
+    if (!isBrowser) return;
+
     const file = event.target.files?.[0];
     
     if (!file) {
@@ -130,6 +144,9 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
       
       if (isHeic) {
         try {
+          // Dynamically import heic2any only when needed
+          const heic2any = (await import('heic2any')).default;
+          
           // Convert HEIC/HEIF to JPEG using heic2any
           const convertedBlob = await heic2any({
             blob: file,
@@ -164,7 +181,7 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
       }
       
       // Create a URL for the processed image
-      const url = URL.createObjectURL(processedFile);
+      const url = typeof URL !== 'undefined' ? URL.createObjectURL(processedFile) : '';
       
       setPickedImage({
         url,
@@ -173,7 +190,7 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
       });
       
       // Update the hidden file input with the processed file
-      if (hiddenFileInputRef.current) {
+      if (hiddenFileInputRef.current && typeof DataTransfer !== 'undefined') {
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(processedFile);
         hiddenFileInputRef.current.files = dataTransfer.files;
@@ -203,7 +220,7 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
         {conversionError && (
           <p className={classes.warningText}>{conversionError}</p>
         )}
-        {pickedImage && (
+        {pickedImage && pickedImage.url && (
           <Image 
             src={pickedImage.url} 
             alt={pickedImage.name}
