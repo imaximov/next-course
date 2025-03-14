@@ -77,8 +77,11 @@ export default function ShareMealPage() {
 
   // Handle redirect and errors
   useEffect(() => {
-    if (formState.redirect) {
-      router.push('/meals/share/success');
+    // Immediately redirect if the form was successfully submitted
+    if (formState.success && formState.redirect) {
+      // Use router.replace instead of router.push for a cleaner transition
+      // This replaces the current history entry instead of adding a new one
+      router.replace('/meals/share/success');
     }
     
     if (formState.errors?.general) {
@@ -195,6 +198,14 @@ export default function ShareMealPage() {
             </button>
           </p>
         </form>
+        
+        {/* Loading overlay during form submission */}
+        {isSubmitting && (
+          <div className={classes.loadingOverlay}>
+            <div className={classes.loadingSpinner}></div>
+            <p>Submitting your delicious meal...</p>
+          </div>
+        )}
       </main>
     </>
   );

@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import classes from './page.module.css';
+import RevalidateLink from './revalidate-link';
 
 export default function SuccessPage() {
   return (
@@ -7,7 +7,7 @@ export default function SuccessPage() {
       <h1>Meal Shared Successfully!</h1>
       <p>Your meal has been shared with the community.</p>
       <p>
-        <Link href="/meals">Back to Meals</Link>
+        <RevalidateLink>Back to Meals</RevalidateLink>
       </p>
     </div>
   );

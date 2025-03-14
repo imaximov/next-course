@@ -17,7 +17,8 @@
   margin-bottom: 1.5rem;
 }
 
-.success a {
+.success a,
+.link {
   display: inline-block;
   padding: 0.5rem 1.5rem;
   background: linear-gradient(90deg, #f9572a, #ff9b05);
@@ -26,9 +27,13 @@
   text-decoration: none;
   font-weight: bold;
   transition: background 0.3s ease;
+  border: none;
+  cursor: pointer;
 }
 
 .success a:hover,
-.success a:focus {
+.success a:focus,
+.link:hover,
+.link:focus {
   background: linear-gradient(90deg, #fd4715, #f9b241);
 } 
