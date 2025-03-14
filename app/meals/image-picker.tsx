@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, ChangeEvent, useEffect } from 'react';
+import React, { useRef, useState, ChangeEvent } from 'react';
 import Image from 'next/image';
 import classes from './image-picker.module.css';
 
@@ -17,17 +17,8 @@ interface PickedImage {
 
 const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
   const [pickedImage, setPickedImage] = useState<PickedImage | null>(null);
+  const [showWarning, setShowWarning] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
-
-  // Set default image if provided
-  useEffect(() => {
-    if (defaultImage) {
-      setPickedImage({
-        url: defaultImage,
-        name: 'Previously uploaded image'
-      });
-    }
-  }, [defaultImage]);
 
   const handlePickClick = () => {
     if (imageInputRef.current) {
@@ -43,6 +34,9 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
       return;
     }
 
+    // Hide warning when an image is selected
+    setShowWarning(false);
+    
     const fileReader = new FileReader();
     
     fileReader.onload = () => {
@@ -56,9 +50,13 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
   };
 
   return (
-    <div className={classes.controls}>
-      <div className={classes.preview}>
-        {!pickedImage && <p>No image picked yet.</p>}
+    <div className={classes.controls} id="image-picker-section">
+      <div className={`${classes.preview} ${showWarning ? classes.warning : ''}`}>
+        {!pickedImage && (
+          <p className={showWarning ? classes.warningText : ''}>
+            {showWarning ? 'Please select an image!' : 'No image picked yet.'}
+          </p>
+        )}
         {pickedImage && (
           <Image 
             src={pickedImage.url} 
@@ -77,15 +75,26 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
           accept="image/png, image/jpeg"
           ref={imageInputRef}
           onChange={handleImageChange}
+          onInvalid={() => setShowWarning(true)}
           required
         />
         <button 
-          className={classes.button} 
+          className={`${classes.button} ${showWarning ? classes.warningButton : ''}`} 
           type="button" 
-          onClick={handlePickClick}
+          onClick={() => {
+            handlePickClick();
+            if (!pickedImage) {
+              setShowWarning(true);
+            }
+          }}
         >
-          Pick an Image
+          {showWarning ? 'Please Pick an Image!' : 'Pick an Image'}
         </button>
+        {showWarning && (
+          <p className={classes.warningMessage}>
+            An image is required for your meal!
+          </p>
+        )}
       </div>
     </div>
   );

@@ -32,6 +32,27 @@ export async function shareMeal(prevState: FormState, formData: FormData): Promi
     creator_email: xss(formData.get('email') as string),
   };
 
+  // Validate that we have all required fields
+  if (!meal.title || !meal.summary || !meal.instructions || !meal.creator || !meal.creator_email) {
+    return {
+      success: false,
+      errors: {
+        general: 'Please fill out all required fields.'
+      }
+    };
+  }
+
+  // Validate that we have an image
+  if (!meal.image || (meal.image instanceof File && meal.image.size === 0)) {
+    return {
+      success: false,
+      errors: {
+        image: 'Please select an image.',
+        general: 'Please select an image for your meal.'
+      }
+    };
+  }
+
   // Store form values to return in case of validation errors
   const formValues: {
     title: string;
@@ -47,24 +68,6 @@ export async function shareMeal(prevState: FormState, formData: FormData): Promi
     creator: meal.creator,
     creator_email: meal.creator_email
   };
-
-  // If we have an image and it's a File object with a size (not a string from a previous submission)
-  if (meal.image && meal.image instanceof File && meal.image.size > 0) {
-    // Create a data URL for the image to preserve it in the form
-    const reader = new FileReader();
-    try {
-      const imageUrl = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(meal.image);
-      });
-      
-      // Add the image URL to the form values
-      formValues.imageUrl = imageUrl;
-    } catch (error) {
-      console.error('Error reading image file:', error);
-    }
-  }
 
   try {
     // Save the meal using the Supabase service

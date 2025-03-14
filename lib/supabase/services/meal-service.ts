@@ -97,8 +97,8 @@ export class SupabaseMealService {
     // Instructions validation
     if (!data.instructions || data.instructions.trim() === '') {
       errors.instructions = 'Instructions are required';
-    } else if (data.instructions.length < 50) {
-      errors.instructions = 'Instructions must be at least 50 characters long';
+    } else if (data.instructions.length < 10) {
+      errors.instructions = 'Instructions must be at least 10 characters long';
     } else if (data.instructions.length > 5000) {
       errors.instructions = 'Instructions must be at most 5000 characters long';
     }

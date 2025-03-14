@@ -80,7 +80,7 @@ export class SupabaseMealRepository extends SupabaseBaseRepository<Meal> {
       // Upload the image to Supabase Storage
       const imageUrl = await this.storageService.uploadFile(mealData.image, imagePath);
       
-      // Prepare meal data
+      // Prepare meal data - explicitly omit any id field
       const meal: Omit<Meal, 'id'> = {
         title: xss(mealData.title),
         slug,
@@ -98,6 +98,8 @@ export class SupabaseMealRepository extends SupabaseBaseRepository<Meal> {
       } catch (dbError: any) {
         // If database operation fails, clean up the saved image
         await this.storageService.deleteFile(imagePath);
+        
+        console.error(`Error creating record in meals:`, dbError);
         
         // Check if it's a unique constraint error
         if (dbError.message.includes('duplicate key value violates unique constraint')) {

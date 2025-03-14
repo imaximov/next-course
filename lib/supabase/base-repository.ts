@@ -89,13 +89,20 @@ export abstract class SupabaseBaseRepository<T> {
    */
   async create(data: Partial<T>): Promise<number> {
     try {
+      // Use object destructuring to separate id from the rest of the data
+      const { id, ...dataWithoutId } = data as any;
+      
       const { data: result, error } = await supabase
         .from(this.tableName)
-        .insert(data)
+        .insert(dataWithoutId)
         .select('id')
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error(`Error creating record in ${this.tableName}:`, error);
+        throw error;
+      }
+      
       return result.id as number;
     } catch (error) {
       console.error(`Error creating record in ${this.tableName}:`, error);

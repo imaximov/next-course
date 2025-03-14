@@ -1,4 +1,4 @@
-import { supabase } from './client';
+import { supabase, supabaseAdmin } from './client';
 
 /**
  * Service for handling file storage operations with Supabase Storage
@@ -18,8 +18,8 @@ export class StorageService {
       // Convert File to ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
       
-      // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
+      // Upload to Supabase Storage using admin client to bypass RLS
+      const { data, error } = await supabaseAdmin.storage
         .from(this.bucketName)
         .upload(path, arrayBuffer, {
           contentType: file.type,
@@ -29,7 +29,7 @@ export class StorageService {
       if (error) throw error;
       
       // Get the public URL
-      const { data: publicUrlData } = supabase.storage
+      const { data: publicUrlData } = supabaseAdmin.storage
         .from(this.bucketName)
         .getPublicUrl(data.path);
       
@@ -45,7 +45,7 @@ export class StorageService {
    */
   async deleteFile(path: string): Promise<void> {
     try {
-      const { error } = await supabase.storage
+      const { error } = await supabaseAdmin.storage
         .from(this.bucketName)
         .remove([path]);
       

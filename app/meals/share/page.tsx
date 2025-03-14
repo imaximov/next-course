@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FormEvent } from 'react';
 import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import classes from './page.module.css';
 import ImagePicker from '@/app/meals/image-picker';
@@ -30,17 +29,6 @@ interface FormState {
   };
 }
 
-// Submit button component with loading state
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  
-  return (
-    <button type="submit" disabled={pending}>
-      {pending ? 'Submitting...' : 'Share Meal'}
-    </button>
-  );
-}
-
 export default function ShareMealPage() {
   const router = useRouter();
   const [formState, formAction] = useActionState<FormState, FormData>(
@@ -48,6 +36,44 @@ export default function ShareMealPage() {
     { success: true, errors: {} }
   );
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  // Custom form submission handler
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    // Check if we have an image file
+    const form = event.currentTarget;
+    const imageInput = form.querySelector('input[name="image"]') as HTMLInputElement;
+    
+    if (!imageInput.files || imageInput.files.length === 0) {
+      // If no file is selected, show an error
+      setImageError('Please select an image for your meal. Your meal looks best with a nice picture!');
+      // Scroll to the image picker section
+      const imagePicker = document.getElementById('image-picker-section');
+      if (imagePicker) {
+        imagePicker.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    
+    // Clear any previous image error
+    setImageError(null);
+    setIsSubmitting(true);
+    
+    try {
+      const formData = new FormData(form);
+      
+      // Submit the form with the form data
+      await formAction(formData);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Handle redirect and errors
   useEffect(() => {
@@ -59,6 +85,15 @@ export default function ShareMealPage() {
       setError(formState.errors.general);
     } else {
       setError(null);
+    }
+    
+    if (formState.errors?.image) {
+      setImageError(formState.errors.image);
+      // Scroll to the image picker section when there's an image error
+      const imagePicker = document.getElementById('image-picker-section');
+      if (imagePicker) {
+        imagePicker.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   }, [formState, router]);
 
@@ -76,7 +111,7 @@ export default function ShareMealPage() {
             <p>{error}</p>
           </div>
         )}
-        <form className={classes.form} action={formAction}>
+        <form className={classes.form} onSubmit={handleSubmit}>
           <div className={classes.row}>
             <p>
               <label htmlFor="name">Your name</label>
@@ -149,11 +184,15 @@ export default function ShareMealPage() {
             name="image" 
             defaultImage={formState.values?.imageUrl}
           />
-          {formState.errors?.image && (
-            <span className={classes.error}>{formState.errors.image}</span>
+          {imageError && (
+            <div className={classes.errorBox} style={{ marginTop: '0.5rem' }}>
+              <p>{imageError}</p>
+            </div>
           )}
           <p className={classes.actions}>
-            <SubmitButton />
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Share Meal'}
+            </button>
           </p>
         </form>
       </main>
