@@ -11,7 +11,14 @@ export default function MealItem({ id, title, slug, image, summary, creator }: M
     <article className={classes.meal}>
       <header>
         <div className={classes.image}>
-          <Image src={image} alt={title} fill />
+          <Image 
+            src={image} 
+            alt={title} 
+            fill 
+            sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
+            quality={85}
+            priority={false}
+          />
           {id && <DeleteMealButton id={id} title={title} />}
         </div>
         <div className={classes.headerText}>

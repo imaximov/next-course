@@ -7,8 +7,30 @@
   font-size: 1.5rem;
 }
 
+@media (max-width: 768px) {
+  .header {
+    margin: 2rem auto 3rem auto;
+    gap: 2rem;
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    margin: 1.5rem auto 2rem auto;
+    gap: 1.5rem;
+    font-size: 1.1rem;
+  }
+}
+
 .header h1 {
   font-family: 'Montserrat', sans-serif;
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 1.8rem;
+  }
 }
 
 .highlight {
@@ -25,6 +47,13 @@
   color: white;
 }
 
+@media (max-width: 768px) {
+  .main {
+    margin: 2rem auto;
+    width: 95%;
+  }
+}
+
 .form {
   max-width: 50rem;
 }
@@ -37,6 +66,13 @@
   text-transform: uppercase;
   color: #b3aea5;
   font-weight: bold;
+}
+
+@media (max-width: 480px) {
+  .form label {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
 }
 
 .form input,
@@ -52,6 +88,22 @@
   color: #ddd6cb;
 }
 
+@media (max-width: 768px) {
+  .form input,
+  .form textarea {
+    font-size: 1.1rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .form input,
+  .form textarea {
+    font-size: 1rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
 .form input:focus,
 .form textarea:focus {
   outline-color: #f99f2a;
@@ -63,12 +115,26 @@
   gap: 1rem;
 }
 
+@media (max-width: 480px) {
+  .row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
 .row p {
   width: 100%;
 }
 
 .actions {
   text-align: right;
+}
+
+@media (max-width: 480px) {
+  .actions {
+    text-align: center;
+    margin-top: 1.5rem;
+  }
 }
 
 .actions button {
@@ -82,6 +148,21 @@
   font: inherit;
   font-size: 1.25rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .actions button {
+    padding: 0.6rem 1.5rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions button {
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    width: 100%;
+  }
 }
 
 .actions button:hover,
@@ -111,4 +192,12 @@
   color: #ef4444;
   margin-bottom: 1.5rem;
   border: 1px solid rgba(220, 38, 38, 0.5);
+}
+
+@media (max-width: 480px) {
+  .errorBox {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
 }

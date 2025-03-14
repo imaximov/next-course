@@ -7,6 +7,11 @@ export const metadata = {
   description: 'Delicious meals, shared by a food-loving community.',
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+};
+
 interface RootLayoutProps {
   children: ReactNode;
 }

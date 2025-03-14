@@ -6,11 +6,27 @@
 
 html {
   font-family: 'Quicksand', sans-serif;
+  font-size: 16px;
 }
 
 body {
   margin: 0;
   background: radial-gradient(#282c34, #282c34);
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Responsive font size for smaller screens */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
 }
 
 .not-found,
@@ -34,9 +50,30 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
+@media (max-width: 768px) {
+  .not-found h1,
+  .error h1 {
+    font-size: 3.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .not-found h1,
+  .error h1 {
+    font-size: 2.5rem;
+  }
+}
+
 .not-found p,
 .error p {
   font-size: 1.5rem;
   font-weight: 500;
   color: #ddd8d8;
+}
+
+@media (max-width: 768px) {
+  .not-found p,
+  .error p {
+    font-size: 1.2rem;
+  }
 }

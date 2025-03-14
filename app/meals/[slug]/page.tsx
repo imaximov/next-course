@@ -28,6 +28,9 @@ export default async function MealDetailsPage({ params }: MealDetailsPageProps) 
             src={meal.image} 
             alt={meal.title} 
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            quality={90}
+            priority={true}
           />
         </div>
         <div className={classes.headerText}>

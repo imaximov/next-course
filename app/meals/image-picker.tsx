@@ -72,6 +72,8 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
             src={pickedImage.url} 
             alt={pickedImage.name}
             fill
+            sizes="(max-width: 480px) 100vw, 10rem"
+            quality={80}
           />
         )}
       </div>

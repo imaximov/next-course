@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import classes from './page.module.css';
 import Link from 'next/link';
 import Meals from '@/components/meals/meals';
