@@ -1,6 +1,6 @@
 import './globals.css';
 import MainHeader from '@/components/main-header/main-header';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 export const metadata = {
   title: 'NextLevel Food',

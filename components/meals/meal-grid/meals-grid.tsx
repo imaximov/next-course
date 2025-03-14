@@ -1,4 +1,3 @@
-import React from 'react';
 import MealItem from '../meal-item/meal-item';
 import classes from './meals-grid.module.css';
 import { Meal } from '@/types/meals';

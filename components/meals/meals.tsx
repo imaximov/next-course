@@ -1,4 +1,3 @@
-import React from 'react';
 import { getMeals } from '@/lib/meals';
 import MealsGrid from './meal-grid/meals-grid';
 

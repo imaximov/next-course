@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, ChangeEvent } from 'react';
+import { useRef, useState, ChangeEvent, useEffect } from 'react';
 import Image from 'next/image';
 import classes from './image-picker.module.css';
 
@@ -19,6 +19,16 @@ const ImagePicker = ({ label, name, defaultImage }: ImagePickerProps) => {
   const [pickedImage, setPickedImage] = useState<PickedImage | null>(null);
   const [showWarning, setShowWarning] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize with defaultImage if provided
+  useEffect(() => {
+    if (defaultImage) {
+      setPickedImage({
+        url: defaultImage,
+        name: 'Default Image'
+      });
+    }
+  }, [defaultImage]);
 
   const handlePickClick = () => {
     if (imageInputRef.current) {

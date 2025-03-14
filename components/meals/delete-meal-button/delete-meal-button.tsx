@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import classes from './delete-meal-button.module.css';
 import DeleteConfirmationModal from '../delete-confirmation-modal/delete-confirmation-modal';

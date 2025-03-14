@@ -1,4 +1,3 @@
-import React from 'react';
 import classes from './page.module.css';
 import Link from 'next/link';
 import ImageSlideshow from '@/components/images/image-slideshow';

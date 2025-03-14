@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import { useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import classes from './page.module.css';
@@ -33,7 +33,7 @@ export default function ShareMealPage() {
   const router = useRouter();
   const [formState, formAction] = useActionState<FormState, FormData>(
     shareMeal, 
-    { success: true, errors: {} }
+    { success: false, errors: {} }
   );
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
